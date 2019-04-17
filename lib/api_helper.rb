@@ -62,4 +62,10 @@ module ApiHelper
     @api.create_meeting(name, id, options)
     @api.join_meeting_url(id, 'Guest', 'mp')
   end
+
+  # Get recordings from BBB server (this could be a lot)
+  def get_recordings
+    prepare
+    @api.get_recordings
+  end
 end

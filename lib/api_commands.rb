@@ -77,5 +77,20 @@ module ApiCommands
       output += "It looks like I'm already configured, so you can go ahead and try out my commands! \n"
       output += "For example, to create a new meeting enter '!create [name]'. Try it out! \n"
     end
+
+    # Get recordings from BBB server
+    # Can only display 25 or so, or will go over Discord message char limit
+    bot.command(:recordings, min_args: 0, max_args: 0,
+                             description: 'Get recordings from the BigBlueButton server.',
+                             usage: '!recordings') do |_event|
+
+      response = ApiHelper.get_recordings
+      output = "Here are 25 of the recordings I found on your server: \n"
+      response[:recordings].take(25).each do |m|
+        output += m[:name] + ': ' + ShortURL.shorten(m[:playback][:format][:url], :tinyurl) + "\n"
+      end
+
+      output
+    end
   end
 end
