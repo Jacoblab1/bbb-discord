@@ -10,38 +10,43 @@ module ApiHelper
 
   module_function
 
+  # Prepare the BBB api bridge
   def prepare
     @api = BigBlueButton::BigBlueButtonApi.new(URL, SECRET, VERSION.to_s, true)
   end
 
-  # gets meetings from BBB server
+  # Get all active meetings on the BBB server
   def get_meetings
     prepare
     @api.get_meetings()
   end
 
+  # Get info about an exisiting meeting
   def get_meeting_info(id)
     prepare
     @api.get_meeting_info(id, nil)
   end
 
+  # Get the join URL for an existing meeting
   def get_meeting_url(id, password)
     prepare
     @api.join_meeting_url(id, "Guest", password)
   end
 
+  # End a meeting on the BBB server
   def end_meeting(id)
     prepare
     mod_pw = get_meeting_info(id).dig(:moderatorPW).to_s
     @api.end_meeting(id, mod_pw)
   end
 
-  # checks if meeting with specified id is running
+  # Check if meeting is running on the BBB server
   def meeting_running?(id)
     prepare
     @api.is_meeting_running?(id)
   end
 
+  # Create a meeting on the BBB server
   def create_meeting(name)
     # create a meeting on the BBB server
     prepare
