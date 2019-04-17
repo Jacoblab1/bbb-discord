@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # BBB API Helpers
 require 'bigbluebutton_api'
 require 'securerandom'
@@ -18,7 +20,7 @@ module ApiHelper
   # Get all active meetings on the BBB server
   def get_meetings
     prepare
-    @api.get_meetings()
+    @api.get_meetings
   end
 
   # Get info about an exisiting meeting
@@ -30,7 +32,7 @@ module ApiHelper
   # Get the join URL for an existing meeting
   def get_meeting_url(id, password)
     prepare
-    @api.join_meeting_url(id, "Guest", password)
+    @api.join_meeting_url(id, 'Guest', password)
   end
 
   # End a meeting on the BBB server
@@ -52,12 +54,12 @@ module ApiHelper
     prepare
     id = SecureRandom.urlsafe_base64
     options = {
-      :attendeePW=> 'ap',
-      :moderatorPW => 'mp',
-      :welcome => "Welcome to the #{(name)} meeting!"
+      attendeePW: 'ap',
+      moderatorPW: 'mp',
+      welcome: "Welcome to the #{name} meeting!"
     }
 
     @api.create_meeting(name, id, options)
-    @api.join_meeting_url(id, "Guest", 'mp')
+    @api.join_meeting_url(id, 'Guest', 'mp')
   end
 end
