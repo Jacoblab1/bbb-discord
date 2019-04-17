@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require './lib/api_helper'
+
+# BigBlueButton Discord Bot Commands
 module ApiCommands
   module_function
 
