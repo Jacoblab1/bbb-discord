@@ -20,7 +20,7 @@ module ApiCommands
     bot.command(:meetings, min_args: 0, max_args: 0,
                 description: 'Get existing meetings from BigBlueButton',
                 usage: '!meetings') do |_event|
-                  
+
       output = "Here are the meetings I found on BigBlueButton: \n"
 
       ApiHelper.get_meetings.slice(:meetings).each do |key, meetings|
@@ -44,7 +44,7 @@ module ApiCommands
         return "Uh oh! I couldn't find that meeting. Are you sure you entered the correct ID?"
       end
 
-      output = "**Here's what I found about the specified meeting:** \n"
+      output = "Here's what I found about the specified meeting: \n"
       output += 'Meeting Name: ' + hash.dig(:meetingName).to_s + "\n"
       output += 'Meeting ID: ' + hash.dig(:meetingID).to_s + "\n"
       output += 'Created: ' + hash.dig(:createDate).to_s + "\n"
@@ -54,16 +54,27 @@ module ApiCommands
       output += 'Running?: ' + hash.dig(:running).to_s + "\n"
     end
 
+    # End a meeting
     bot.command(:end, min_args: 1, max_args: 1,
                 description: 'End a meeting.',
                 usage: '!end [id]') do |_event, id|
       begin
         ApiHelper.end_meeting(id)
+        output = "I've ended the BigBlueButton meeting for you!"
       rescue BigBlueButton::BigBlueButtonException
-        return "I can't seem to end this meeting. Are you sure it exists?"
+        output = "I can't seem to end this meeting. Are you sure it exists?"
       end
 
-      "I've ended the BigBlueButton meeting for you!"
+      output
+    end
+
+    # Base bot command
+    bot.command(:bbb, min_args: 0, max_args: 0,
+                description: 'Information about the BigBlueButton bot.',
+                usage: '!bbb') do |_event|
+      output = "Hey there! I'm the BigBlueButton Discord bot. \n"
+      output += "It looks like I'm already configured, so you can go ahead and try out my commands! \n"
+      output += "For example, to create a new meeting enter '!create [name]'. Try it out! \n"
     end
   end
 end

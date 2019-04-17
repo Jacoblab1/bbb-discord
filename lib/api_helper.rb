@@ -4,15 +4,14 @@ require 'securerandom'
 require 'shorturl'
 
 module ApiHelper
+  URL = (ENV['BIGBLUEBUTTON_ENDPOINT'] || 'http://test-install.blindsidenetworks.com/bigbluebutton/') + 'api'
+  SECRET = ENV['BIGBLUEBUTTON_SECRET'] || '8cd8ef52e8e101574e400365b55e11a6'
+  VERSION = 0.81
 
   module_function
 
   def prepare
-    url = (ENV['BIGBLUEBUTTON_ENDPOINT'] || 'http://test-install.blindsidenetworks.com/bigbluebutton/') + 'api'
-    secret = ENV['BIGBLUEBUTTON_SECRET'] || '8cd8ef52e8e101574e400365b55e11a6'
-    version = 0.81
-
-    @api = BigBlueButton::BigBlueButtonApi.new(url, secret, version.to_s, true)
+    @api = BigBlueButton::BigBlueButtonApi.new(URL, SECRET, VERSION.to_s, true)
   end
 
   # gets meetings from BBB server
