@@ -64,8 +64,8 @@ module ApiHelper
   end
 
   # Get recordings from BBB server (this could be a lot)
-  def get_recordings
+  def get_recordings(options = {})
     prepare
-    @api.get_recordings
+    @api.get_recordings(options)
   end
 end

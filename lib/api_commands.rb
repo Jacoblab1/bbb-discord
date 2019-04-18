@@ -72,12 +72,22 @@ module ApiCommands
     end
 
     # Base bot command
-    bot.command(:bbb, min_args: 0, max_args: 0,
+    bot.command(:bbb, min_args: 0, max_args: 1,
                       description: 'Information about the BigBlueButton bot.',
-                      usage: '!bbb') do |_event|
-      output = "Hey there! I'm the BigBlueButton Discord bot. \n"
-      output += "It looks like I'm already configured, so you can go ahead and try out my commands! \n"
-      output += "For example, to create a new meeting enter '!create [name]'. Try it out! \n"
+                      usage: '!bbb') do |_event, help|
+
+      if help.eql?('help')
+        output = "Here are the available BigBlueButton commands: \n"
+        output += "Create a new BBB meeting: `!create [name]` \n"
+        output += "Get info on a BBB meeting: `!meeting [meeting_id]` \n"
+        output += "Get all active BBB meetings: `!meetings` \n"
+        output += "Get 25 recordings from BBB: `!recordings` \n"
+        output += "Get info on a BBB recording: `!recording [recording_id]` \n"
+      else
+        output = "Hey there! I'm the BigBlueButton Discord bot. \n"
+        output += "It looks like I'm already configured, so you can go ahead and try out my commands! \n"
+        output += "For a list of BigBlueButton commands, enter `!bbb help` \n"
+      end
     end
 
     # Get recordings from BBB server
@@ -91,6 +101,26 @@ module ApiCommands
       response[:recordings].take(25).each do |m|
         output += m[:name] + ': ' + ShortURL.shorten(m[:playback][:format][:url], :tinyurl) + "\n"
       end
+
+      output
+    end
+
+    # Get info on a BBB recording
+    bot.command(:recording, min_args: 1, max_args: 1,
+                            description: 'Get a recording from the BigBlueButton server.',
+                            usage: '!recording [id]') do |_event, record_id|
+
+      response = ApiHelper.get_recordings(recordID: record_id)
+      recording = response[:recordings].first
+
+      output = "Here's what I found about that recording: \n"
+      output += "Recording ID: #{recording[:recordID]} \n"
+      output += "Meeting ID: #{recording[:meetingID]} \n"
+      output += "Name: #{recording[:name]} \n"
+      output += "Start Time: #{recording[:startTime]} \n"
+      output += "End Time: #{recording[:endTime]} \n"
+      output += "Participants: #{recording[:participants]} \n"
+      output += "Playback URL: #{ShortURL.shorten(recording[:playback][:format][:url], :tinyurl)} \n"
 
       output
     end
