@@ -2,19 +2,24 @@
 
 # BBB API Helpers
 require 'bigbluebutton_api'
-require 'securerandom'
 require 'shorturl'
 
 module ApiHelper
   URL = (ENV['BIGBLUEBUTTON_ENDPOINT'] || 'http://test-install.blindsidenetworks.com/bigbluebutton/') + 'api'
   SECRET = ENV['BIGBLUEBUTTON_SECRET'] || '8cd8ef52e8e101574e400365b55e11a6'
-  VERSION = 1.00
+  VERSION = 0.9
 
   module_function
 
   # Prepare the BBB api bridge
   def prepare
     @api = BigBlueButton::BigBlueButtonApi.new(URL, SECRET, VERSION.to_s, true)
+  end
+
+  # Get BBB server api version
+  def get_version
+    prepare
+    @api.get_api_version
   end
 
   # Get all active meetings on the BBB server
@@ -49,10 +54,9 @@ module ApiHelper
   end
 
   # Create a meeting on the BBB server
-  def create_meeting(name)
+  def create_meeting(name, id)
     # create a meeting on the BBB server
     prepare
-    id = SecureRandom.urlsafe_base64
     options = {
       attendeePW: 'ap',
       moderatorPW: 'mp',

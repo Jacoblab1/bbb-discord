@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require './lib/api_helper'
+require 'securerandom'
 
 # BigBlueButton Discord Bot Commands
 module ApiCommands
@@ -8,12 +9,13 @@ module ApiCommands
 
   def enable_commands(bot)
     # Create new meeting
-    bot.command(:create, min_args: 0, max_args: 1,
+    bot.command(:create, min_args: 0, max_args: 2,
                          description: 'Creates a new BigBlueButton meeting.',
-                         usage: '!create [name]') do |_event, name|
+                         usage: '!create [name] [id]') do |_event, name, id|
 
       name ||= 'BigBlueButton Meeting'
-      link = ApiHelper.create_meeting(name)
+      id ||= SecureRandom.urlsafe_base64
+      link = ApiHelper.create_meeting(name, id)
       short_link = ShortURL.shorten(link, :tinyurl)
 
       "Here's your new BigBlueButton meeting! \n #{short_link}"
@@ -78,15 +80,23 @@ module ApiCommands
 
       if help.eql?('help')
         output = "Here are the available BigBlueButton commands: \n"
-        output += "Create a new BBB meeting: `!create [name]` \n"
+        output += "Parameters marked with a * are optional. \n"
+        output += "Create a new BBB meeting: `!create [name*] [id*]` \n"
         output += "Get info on a BBB meeting: `!meeting [meeting_id]` \n"
         output += "Get all active BBB meetings: `!meetings` \n"
         output += "Get 25 recordings from BBB: `!recordings` \n"
         output += "Get info on a BBB recording: `!recording [recording_id]` \n"
+        output += "End an active BBB meeting: `!end [meeting_id]` \n"
       else
         output = "Hey there! I'm the BigBlueButton Discord bot. \n"
-        output += "It looks like I'm already configured, so you can go ahead and try out my commands! \n"
-        output += "For a list of BigBlueButton commands, enter `!bbb help` \n"
+        begin
+          ApiHelper.get_version
+          output += "It looks like I'm already configured, so you can go ahead and try out my commands! \n"
+          output += "For a list of BigBlueButton commands, enter `!bbb help` \n"
+        rescue BigBlueButton::BigBlueButtonException
+          output += "Unfourtunately, I wasn't able to connect to the BigBlueButton server. \n"
+          output += "Consider checking my configuration, and then try this command again. \n"
+        end
       end
     end
 
