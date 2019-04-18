@@ -8,7 +8,7 @@ require 'shorturl'
 module ApiHelper
   URL = (ENV['BIGBLUEBUTTON_ENDPOINT'] || 'http://test-install.blindsidenetworks.com/bigbluebutton/') + 'api'
   SECRET = ENV['BIGBLUEBUTTON_SECRET'] || '8cd8ef52e8e101574e400365b55e11a6'
-  VERSION = 0.81
+  VERSION = 1.00
 
   module_function
 
